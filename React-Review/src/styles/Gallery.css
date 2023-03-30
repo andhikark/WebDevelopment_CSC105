@@ -1,0 +1,21 @@
+.gallery-container {
+    margin: 20px;
+  }
+  
+  .no-bullet {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .gallery-image {
+    width: 200px;
+    transition: transform 1s ease-in-out;
+  }
+  
+  .gallery-image:hover {
+    transform: scale(1.2);
+  }
+
+  .centered-text {
+    text-align: center;
+  }

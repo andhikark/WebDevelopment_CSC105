@@ -1,0 +1,22 @@
+.favorite-sites {
+    margin: 20px;
+  }
+  
+  .favorite-sites-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .favorite-site-link {
+    color: lightgreen;
+    text-decoration: none;
+    transition: color 0.5s ease;
+  }
+  
+  .favorite-site-link:hover {
+    color: red;
+  }
+  
+  .centered-text {
+    text-align: center;
+  }  
