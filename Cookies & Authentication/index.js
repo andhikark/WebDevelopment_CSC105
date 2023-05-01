@@ -5,36 +5,67 @@ const mysql = require("mysql2");
 const port = 3000;
 const bcrypt = require("bcrypt");
 
-
-
 const connection = mysql.createConnection({
-	host: "server2.bsthun.com",
-	port: "6105",
-	user: "lab_hgnrb",
-	password: "stpj1kjWldx3n6Gn",
-	database: "lab_todo02_h5xyvh",
+    host: "server2.bsthun.com",
+    port: "6105",
+    user: "lab_hgnrb",
+    password: "stpj1kjWldx3n6Gn",
+    database: "lab_todo02_h5xyvh",
 });
 
 connection.connect();
 console.log("Database is connected");
 
-
 app.use(bodyParser.json({ type: "application/json" }));
 
 app.get("/", (req, res) => {
-	res.send("Hello World!");
+    res.send("Hello World!");
 });
 
-app.listen(port, () => {
-	console.log(`Example app listening on port ${port}`);
-  });
-
-  //new login endpoint using the hashed password from the database
-  app.post("/basic/login", (req, res) => {
+// new register endpoint
+app.post("/register", async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
 
-    var sql = mysql.format(
+    // password validation
+    const isValidPassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/.test(password);
+    if (!isValidPassword) {
+        res.json({
+            success: false,
+            message: "Password does not meet the requirements",
+        });
+        return;
+    }
+
+    // generate hashed password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // insert new user record
+    const sql = mysql.format(
+        "INSERT INTO users (username, hashed_password) VALUES (?, ?)",
+        [username, hashedPassword]
+    );
+    connection.query(sql, (err, result) => {
+        if (err) {
+            return res.json({
+                success: false,
+                data: null,
+                error: err.message,
+            });
+        }
+        res.json({
+            success: true,
+            message: "Registration success",
+        });
+    });
+});
+
+// new login endpoint using the hashed password from the database
+app.post("/basic/login", (req, res) => {
+    const username = req.body.username;
+    const password = req.body.password;
+
+    const sql = mysql.format(
         "SELECT * FROM users WHERE username = ?",
         [username]
     );
@@ -75,3 +106,6 @@ app.listen(port, () => {
     });
 });
 
+app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`);
+});
