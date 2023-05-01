@@ -37,10 +37,9 @@ app.post("/register", async (req, res) => {
         return;
     }
 
-    // generate hashed password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // insert new user record
+
     const sql = mysql.format(
         "INSERT INTO users (username, hashed_password) VALUES (?, ?)",
         [username, hashedPassword]
