@@ -1,18 +1,61 @@
 import { Box, Button, Card, Modal, TextField } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useKeyDown } from '../../../hooks/useKeyDown';
 import CommentCard from './components/CommentCard';
+import Cookies from 'js-cookie';
+import Axios from '../../../share/AxiosInstance';
 
 const CommentModal = ({ open = false, handleClose = () => {} }) => {
-  const [textField, setTextField] = useState('');
+  const [textField, setTextField] = useState();
   const [comments, setComments] = useState([]);
 
   useKeyDown(() => {
     handleAddComment();
   }, ['Enter']);
 
-  const handleAddComment = () => {
+  useEffect(() => {
+    // TODO: Implement get notes by user's token
+    // 1. check if user is logged in
+    try {
+      const userToken = Cookies.get('UserToken');
+      if (userToken !== undefined && userToken !== 'undefined') {
+        // 2. call API to get notes
+        Axios.get('/comment', { headers: { Authorization: `Bearer ${userToken}` } }).then((res) => {
+          // 3. set notes to state
+          const fetchedComments = res.data.data.map((el) => {
+            return {
+              id: el.id,
+              msg: el.text,
+            };
+          });
+          setComments(fetchedComments);
+          console.log(fetchedComments);
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
+  const handleAddComment = async () => {
     // TODO implement logic
+    console.log(textField);
+    try {
+      const userToken = Cookies.get('UserToken');
+      console.log(userToken);
+      const response = await Axios.post(
+        '/comment',
+        { text: textField },
+        {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        }
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
     setComments([...comments, { id: Math.random(), msg: textField }]);
   };
 
