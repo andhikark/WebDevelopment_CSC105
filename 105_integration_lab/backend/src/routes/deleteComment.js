@@ -6,13 +6,14 @@ export const deleteComment = async (r, s) => {
   // TODO : DELETE COMMENT LOGIC
   const { response, request } = new ExpressTypeIntecepter(r, s).get();
   const { userId } = response.locals;
-  const { commentId } = request.body;
+  const { commentId } = request.params;
   const prisma = getPrisma();
 
   try {
     const comment = await prisma.comment.findUniqueOrThrow({
       where: {
         id: +commentId,
+        creatorId: +userId,
       },
     });
 
