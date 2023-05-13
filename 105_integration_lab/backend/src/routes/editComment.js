@@ -7,7 +7,6 @@ export const editComment = async (r, s) => {
   const { response, request } = new ExpressTypeIntecepter(r, s).get();
   const { userId } = response.locals;
   const { text, commentId } = request.body;
-
   const prisma = getPrisma();
   try {
     const comment = await prisma.comment.findUniqueOrThrow({
