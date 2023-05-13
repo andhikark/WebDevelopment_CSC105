@@ -58,12 +58,6 @@ app.use((req, res, next) => {
     return res.json(error);
   }
 });
-app.use(
-  cors({
-    origin: ['http://localhost:5174', 'http://localhost:5173'],
-    credentials: true,
-  })
-);
 
 app.get('/me', getUser);
 
@@ -83,7 +77,7 @@ app.post('/comment', createComment);
 
 app.patch('/comment', editComment);
 
-app.delete('/comment', deleteComment);
+app.delete('/comment/:commentId', deleteComment);
 
 app.listen('8000', () => {
   console.log('App is listenning on http://localhost:8000 ');
